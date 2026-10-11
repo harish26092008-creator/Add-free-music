@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify – Web Player: Music for everyone</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231ED760%22/><path d=%22M71.2 64.7c-.8 1.4-2.5 1.8-3.9 1-10.7-6.5-24.1-8-39.9-4.4-1.6.4-3.2-.6-3.5-2.2-.4-1.6.6-3.2 2.2-3.5 17.3-4 32.1-2.2 44.1 5.1 1.4.9 1.8 2.6 1 4zm4.8-10.7c-1 1.7-3.1 2.2-4.8 1.2-12.2-7.5-30.8-9.7-45.3-5.3-1.9.6-4-.5-4.5-2.4-.6-1.9.5-4 2.4-4.5 16.5-5 37.1-2.6 51 5.9 1.7 1 2.2 3.2 1.2 4.9zm.4-11.2c-14.7-8.7-38.9-9.5-52.9-5.3-2.3.7-4.7-.6-5.4-2.8-.7-2.3.6-4.7 2.8-5.4 16.2-4.9 42.9-4 59.8 6.1 2 1.2 2.7 3.9 1.5 5.9-1.2 2-3.9 2.7-5.8 1.5z%22 fill=%22%23121212%22/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="spotify-theme">
+  <!-- Toast Notification Container -->
+  <div id="toast" class="sp-toast" aria-live="polite"></div>
+
+  <!-- Main Application Wrapper -->
+  <div class="spotify-app" id="app">
+
+    <!-- Top & Body Grid Area -->
+    <div class="app-body">
+      
+      <!-- LEFT SIDEBAR -->
+      <aside class="sidebar-container" id="sidebar">
+        <!-- Navigation Box (Home, Search) -->
+        <nav class="nav-card" aria-label="Main Navigation">
+          <div class="brand-logo" id="logoBtn">
+            <svg viewBox="0 0 1134 340" class="spotify-full-logo" fill="currentColor">
+              <path d="M4.5 0C2.01 0 0 2.02 0 4.5v331c0 2.49 2.01 4.5 4.5 4.5h1125c2.49 0 4.5-2.01 4.5-4.5V4.5c0-2.48-2.01-4.5-4.5-4.5H4.5zm165.68 53.64c64.18 0 116.2 52.02 116.2 116.2 0 64.19-52.02 116.2-116.2 116.2-64.18 0-116.2-52.01-116.2-116.2 0-64.18 52.02-116.2 116.2-116.2zm0 25.13c-50.3 0-91.07 40.78-91.07 91.07 0 50.3 40.77 91.07 91.07 91.07 50.3 0 91.08-40.77 91.08-91.07 0-50.29-40.78-91.07-91.08-91.07zm186.2 47.93v133.58h-23.75V126.7h23.75zm102.59 0c26.77 0 47.2 18.73 47.2 46.46 0 27.73-20.43 46.46-47.2 46.46s-47.2-18.73-47.2-46.46c0-27.73 20.43-46.46 47.2-46.46zm0 22.06c-14.77 0-24.16 11.23-24.16 24.4 0 13.18 9.39 24.4 24.16 24.4 14.77 0 24.16-11.22 24.16-24.4 0-13.17-9.39-24.4-24.16-24.4zm98.85-22.06c11.02 0 20.02 4.14 26.15 11.59l-15.54 13.9c-3.13-3.68-7.25-5.9-12.02-5.9-10.39 0-17.7 8.13-17.7 18.87 0 10.74 7.31 18.87 17.7 18.87 4.77 0 8.89-2.22 12.02-5.9l15.54 13.9c-6.13 7.45-15.13 11.59-26.15 11.59-24.25 0-41.45-17.27-41.45-42.33 0-25.06 17.2-42.33 41.45-42.33zm116.7 0v21.3h-25.79v65.42h-23.75V148h-14.56v-21.3h14.56v-14.9c0-17.75 11.45-28.87 29.83-28.87 6.13 0 11.87 1.13 16.54 2.87l-5.02 19.34c-2.76-.92-5.65-1.46-8.91-1.46-6.4 0-8.69 4.14-8.69 11.46v11.56h25.79zm51.78 0v86.72h-23.75V126.7h23.75zm12.3-21.73c0-7.82 6.34-14.15 14.16-14.15s14.16 6.33 14.16 14.15c0 7.82-6.34 14.16-14.16 14.16-7.82 0-14.16-6.34-14.16-14.16zm93.45 21.73v18.73h-34.82v67.99h-23.75v-67.99h-17.07V126.7h17.07v-13.6c0-19.13 12.6-30.17 31.95-30.17 7.02 0 14.54 1.5 19.82 3.89l-5.66 18.86c-2.88-1.13-6.52-1.89-10.28-1.89-7.28 0-12.08 4.27-12.08 12.82V126.7h34.76zm47.78 0l19.58 55.4 19.34-55.4h25.43l-34.19 86.72c-7.4 18.73-19.83 26.27-36.95 26.27-5.02 0-10.92-.88-15.69-2.26l4.27-19.34c2.88.88 5.77 1.38 8.65 1.38 8.16 0 13.93-3.64 17.57-12.81l1.88-4.78-35.31-75.38h25.45z"/>
+            </svg>
+          </div>
+
+          <ul class="nav-list">
+            <li class="nav-item active" id="navHome">
+              <button class="nav-btn" title="Home">
+                <i class="fa-solid fa-house nav-icon"></i>
+                <span class="nav-label">Home</span>
+              </button>
+            </li>
+            <li class="nav-item" id="navSearch">
+              <button class="nav-btn" title="Search">
+                <i class="fa-solid fa-magnifying-glass nav-icon"></i>
+                <span class="nav-label">Search</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Library Container -->
+        <section class="library-card" aria-label="Your Music Library">
+          <div class="library-header">
+            <button class="library-title-btn" id="libraryToggleBtn" title="Collapse or expand Your Library">
+              <i class="fa-solid fa-book-bookmark lib-icon"></i>
+              <span class="lib-label">Your Library</span>
+            </button>
+            <div class="library-actions">
+              <button class="icon-circle-btn" id="createPlaylistBtn" title="Create playlist or folder">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <button class="icon-circle-btn" id="expandLibBtn" title="Show more">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Library Filter Pills -->
+          <div class="lib-pills-row">
+            <button class="filter-pill active" data-lib-filter="all">All</button>
+            <button class="filter-pill" data-lib-filter="playlists">Playlists</button>
+            <button class="filter-pill" data-lib-filter="artists">Artists</button>
+            <button class="filter-pill" data-lib-filter="albums">Albums</button>
+          </div>
+
+          <!-- Library Search & Sort Row -->
+          <div class="lib-search-row">
+            <div class="lib-mini-search" id="libMiniSearch">
+              <button class="icon-plain-btn" id="libSearchToggle" title="Search in Library">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+              <input type="text" id="libSearchInput" placeholder="Search in Your Library" class="hidden-input">
+            </div>
+            <div class="lib-sort-dropdown">
+              <button class="lib-sort-btn" id="libSortBtn">
+                <span>Recents</span>
+                <i class="fa-solid fa-bars-staggered"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Library Items List -->
+          <div class="lib-items-list" id="libraryList">
+            <!-- Liked Songs Special Item -->
+            <div class="lib-item special-liked active" id="libLikedSongs" data-playlist="liked">
+              <div class="lib-item-art liked-icon-art">
+                <i class="fa-solid fa-heart"></i>
+              </div>
+              <div class="lib-item-info">
+                <div class="lib-item-title">Liked Songs</div>
+                <div class="lib-item-sub">
+                  <i class="fa-solid fa-thumbtack pin-icon"></i> Playlist • <span id="likedCountText">0 songs</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Playlist Items will be rendered here by JS -->
+          </div>
+        </section>
+      </aside>
+
+      <!-- MAIN CONTENT VIEW AREA -->
+      <main class="main-view-container" id="mainView">
+        
+        <!-- Sticky Dynamic Top Header Bar -->
+        <header class="top-nav-bar" id="topHeader">
+          <div class="top-nav-left">
+            <div class="history-controls">
+              <button class="history-circle-btn" id="historyBackBtn" title="Go back">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button class="history-circle-btn" id="historyForwardBtn" title="Go forward">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+
+            <!-- Search Bar (Appears when Search view is active or user searches) -->
+            <div class="header-search-box" id="headerSearchBox">
+              <i class="fa-solid fa-magnifying-glass search-box-icon"></i>
+              <input type="text" id="mainSearchInput" placeholder="What do you want to play?" autocomplete="off" spellcheck="false">
+              <button class="clear-search-btn" id="clearSearchBtn" title="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <!-- Filter Pills (All / Music / Podcasts) -->
+            <div class="header-pills" id="headerCategoryPills">
+              <button class="cat-pill active" data-category="all">All</button>
+              <button class="cat-pill" data-category="music">Music</button>
+              <button class="cat-pill" data-category="podcasts">Podcasts</button>
+            </div>
+          </div>
+
+          <div class="top-nav-right">
+            <button class="explore-premium-pill" title="Upgrade to Premium">
+              <span>Explore Premium</span>
+            </button>
+            <button class="install-app-pill" id="installAppBtn" title="Install Desktop App">
+              <i class="fa-regular fa-circle-down"></i>
+              <span>Install App</span>
+            </button>
+            <button class="icon-circle-btn notification-bell-btn" title="What's New">
+              <i class="fa-regular fa-bell"></i>
+            </button>
+            <div class="user-profile-menu" id="userProfileBtn" title="User Profile">
+              <div class="user-avatar-badge">K</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dynamic Ambient Background Glow -->
+        <div class="ambient-glow" id="ambientGlow"></div>
+
+        <!-- Scrollable Main Container -->
+        <div class="scroll-content" id="scrollContent">
+
+          <!-- 1. HOME VIEW SECTION -->
+          <section class="view-panel" id="homeView">
+            
+            <!-- Dynamic Time Greeting & Quick Access 6-Grid -->
+            <div class="greeting-section">
+              <h1 class="greeting-title" id="greetingHeading">Good evening</h1>
+              <div class="quick-grid" id="quickGrid">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- Shelf Section: Rockstar Anirudh Mix -->
+            <div class="shelf-section">
+              <div class="shelf-header">
+                <h2 class="shelf-title">Rockstar Anirudh Hits</h2>
+                <button class="shelf-show-all-btn" data-shelf="anirudh">Show all</button>
+              </div>
+              <div class="cards-carousel" id="anirudhShelf">
+                <!-- Cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- Shelf Section: Thalapathy Vijay Anthems -->
+            <div class="shelf-section">
+              <div class="shelf-header">
+                <h2 class="shelf-title">Thalapathy Vijay Blockbusters</h2>
+                <button class="shelf-show-all-btn" data-shelf="vijay">Show all</button>
+              </div>
+              <div class="cards-carousel" id="vijayShelf">
+                <!-- Cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- Shelf Section: High Energy Kuthu & Dance -->
+            <div class="shelf-section">
+              <div class="shelf-header">
+                <h2 class="shelf-title">100% High Energy Kuthu & Dance</h2>
+                <button class="shelf-show-all-btn" data-shelf="kuthu">Show all</button>
+              </div>
+              <div class="cards-carousel" id="kuthuShelf">
+                <!-- Cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- Shelf Section: Dhanush VIP & Melodies -->
+            <div class="shelf-section">
+              <div class="shelf-header">
+                <h2 class="shelf-title">Dhanush Specials & Breezy Melodies</h2>
+                <button class="shelf-show-all-btn" data-shelf="dhanush">Show all</button>
+              </div>
+              <div class="cards-carousel" id="dhanushShelf">
+                <!-- Cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- Shelf Section: Leo & Dark Action Scores -->
+            <div class="shelf-section">
+              <div class="shelf-header">
+                <h2 class="shelf-title">Action & Dark Mode Energy</h2>
+                <button class="shelf-show-all-btn" data-shelf="action">Show all</button>
+              </div>
+              <div class="cards-carousel" id="actionShelf">
+                <!-- Cards injected by JS -->
+              </div>
+            </div>
+
+            <!-- Spotify Footer -->
+            <footer class="spotify-footer">
+              <div class="footer-columns">
+                <div class="footer-col">
+                  <h3>Company</h3>
+                  <a href="#">About</a>
+                  <a href="#">Jobs</a>
+                  <a href="#">For the Record</a>
+                </div>
+                <div class="footer-col">
+                  <h3>Communities</h3>
+                  <a href="#">For Artists</a>
+                  <a href="#">Developers</a>
+                  <a href="#">Advertising</a>
+                  <a href="#">Investors</a>
+                  <a href="#">Vendors</a>
+                </div>
+                <div class="footer-col">
+                  <h3>Useful links</h3>
+                  <a href="#">Support</a>
+                  <a href="#">Free Mobile App</a>
+                  <a href="#">Popular Songs</a>
+                </div>
+                <div class="footer-col">
+                  <h3>Spotify Plans</h3>
+                  <a href="#">Premium Individual</a>
+                  <a href="#">Premium Duo</a>
+                  <a href="#">Premium Family</a>
+                  <a href="#">Premium Student</a>
+                </div>
+                <div class="footer-socials">
+                  <a href="#" class="social-btn" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                  <a href="#" class="social-btn" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                  <a href="#" class="social-btn" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+              </div>
+              <div class="footer-bottom">
+                <div class="footer-legal">
+                  <a href="#">Legal</a>
+                  <a href="#">Safety & Privacy Center</a>
+                  <a href="#">Privacy Policy</a>
+                  <a href="#">Cookies</a>
+                  <a href="#">About Ads</a>
+                  <a href="#">Accessibility</a>
+                </div>
+                <div class="footer-copy">
+                  &copy; 2026 Spotify AB • Tamil Edition
+                </div>
+              </div>
+            </footer>
+          </section>
+
+          <!-- 2. SEARCH VIEW SECTION -->
+          <section class="view-panel hidden-panel" id="searchView">
+            <div class="search-results-container" id="searchResultsArea">
+              <!-- When searching: Top Result & Matching songs -->
+              <div class="search-top-results hidden" id="searchLiveResults">
+                <div class="top-result-wrapper">
+                  <h2 class="section-title">Top result</h2>
+                  <div class="top-result-card" id="topResultCard">
+                    <!-- Injected by JS -->
+                  </div>
+                </div>
+                <div class="matching-songs-wrapper">
+                  <h2 class="section-title">Songs</h2>
+                  <div class="mini-song-rows" id="miniSongResults">
+                    <!-- Injected by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Browse All Genre Category Cards -->
+              <div class="browse-categories-wrapper" id="browseAllCategories">
+                <h2 class="section-title">Browse all</h2>
+                <div class="genre-cards-grid" id="genreCardsGrid">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. PLAYLIST / ALBUM DETAIL VIEW SECTION -->
+          <section class="view-panel hidden-panel" id="playlistView">
+            <!-- Playlist Hero Header Banner -->
+            <div class="playlist-hero-banner" id="playlistBanner">
+              <div class="hero-cover-wrapper">
+                <img src="" alt="Playlist Cover" id="playlistHeroImg" class="hero-cover-img">
+                <div class="hero-cover-overlay">
+                  <i class="fa-solid fa-pen"></i>
+                  <span>Choose photo</span>
+                </div>
+              </div>
+              <div class="hero-meta-details">
+                <span class="hero-type-label" id="playlistHeroType">Public Playlist</span>
+                <h1 class="hero-playlist-title" id="playlistHeroTitle">Rockstar Anirudh</h1>
+                <p class="hero-description" id="playlistHeroDesc">All the chart-topping high voltage anthems and soothing melodies by Rockstar Anirudh.</p>
+                <div class="hero-info-line">
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Curator" class="curator-avatar">
+                  <span class="curator-name">Spotify</span>
+                  <span class="dot-separator">•</span>
+                  <span class="playlist-likes-count" id="playlistHeroLikes">4,892,104 saves</span>
+                  <span class="dot-separator">•</span>
+                  <span class="playlist-song-stats" id="playlistHeroStats">52 songs, about 3 hr 15 min</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Playlist Action Bar (Big Green Play, Heart, Download, Options) -->
+            <div class="playlist-actions-row">
+              <button class="big-green-play-btn" id="playlistBigPlayBtn" title="Play playlist">
+                <i class="fa-solid fa-play"></i>
+              </button>
+              <button class="action-icon-btn heart-action-btn" id="playlistHeartBtn" title="Save to Your Library">
+                <i class="fa-regular fa-heart"></i>
+              </button>
+              <button class="action-icon-btn" id="playlistDownloadBtn" title="Download">
+                <i class="fa-regular fa-circle-down"></i>
+              </button>
+              <button class="action-icon-btn" id="playlistOptionsBtn" title="More options">
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+              <div class="playlist-actions-right">
+                <div class="table-search-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="playlistTableFilter" placeholder="Filter in playlist">
+                </div>
+                <div class="sort-by-select">
+                  <span>Custom order</span>
+                  <i class="fa-solid fa-caret-down"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Track List Table Header -->
+            <div class="track-table-container">
+              <div class="track-table-header">
+                <div class="th-col col-idx">#</div>
+                <div class="th-col col-title">Title</div>
+                <div class="th-col col-album">Album</div>
+                <div class="th-col col-date">Date added</div>
+                <div class="th-col col-duration"><i class="fa-regular fa-clock"></i></div>
+              </div>
+
+              <!-- Track Rows Container -->
+              <div class="track-rows-list" id="trackRowsList">
+                <!-- Track rows injected dynamically by JS -->
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+      <!-- RIGHT SIDEBAR (NOW PLAYING / QUEUE PANEL) -->
+      <aside class="right-sidebar-panel hidden-right" id="rightSidebar">
+        <div class="right-sidebar-header">
+          <h3 class="panel-heading" id="rightPanelTitle">Now Playing</h3>
+          <div class="panel-header-actions">
+            <button class="icon-plain-btn" id="toggleQueueViewBtn" title="Toggle Queue / Info">
+              <i class="fa-solid fa-list-ul"></i>
+            </button>
+            <button class="icon-plain-btn" id="closeRightSidebarBtn" title="Close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Now Playing View Content -->
+        <div class="right-panel-body" id="nowPlayingPanelBody">
+          <div class="side-cover-art-wrapper">
+            <img src="" alt="Album Art" id="sideCoverImg" class="side-cover-img">
+          </div>
+          <div class="side-track-info">
+            <div class="side-title-row">
+              <div class="side-track-title" id="sideTrackTitle">Song Title</div>
+              <button class="icon-plain-btn side-like-btn" id="sideLikeBtn" title="Save to Liked Songs">
+                <i class="fa-regular fa-heart"></i>
+              </button>
+            </div>
+            <div class="side-track-artist" id="sideTrackArtist">Artist Name</div>
+          </div>
+
+          <!-- About The Artist Card -->
+          <div class="side-artist-card">
+            <div class="side-artist-header">
+              <span class="card-tag">About the artist</span>
+            </div>
+            <div class="side-artist-banner" id="sideArtistBanner">
+              <div class="artist-banner-overlay">
+                <h4 id="sideArtistCardName">Anirudh Ravichander</h4>
+                <p id="sideArtistFollowers">28,459,201 monthly listeners</p>
+              </div>
+            </div>
+            <div class="side-artist-bio" id="sideArtistBio">
+              Rockstar Anirudh Ravichander is one of Indian cinema's most celebrated music composers, known for iconic soundtracks in Leo, Vikram, Jailer, Master, and Kaththi.
+            </div>
+          </div>
+
+          <!-- Next in Queue Quick Card -->
+          <div class="side-queue-preview">
+            <div class="side-queue-head">
+              <span>Next in queue</span>
+              <button class="text-link-btn" id="sideOpenQueueBtn">Open queue</button>
+            </div>
+            <div class="side-queue-card" id="sideNextTrackCard">
+              <img src="" alt="Next Song" id="sideNextImg" class="mini-card-art">
+              <div class="mini-card-info">
+                <div class="mini-card-title" id="sideNextTitle">Next Song Title</div>
+                <div class="mini-card-artist" id="sideNextArtist">Next Artist</div>
+              </div>
+              <button class="icon-circle-btn mini-play-btn" id="sidePlayNextBtn">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Queue View Content -->
+        <div class="right-panel-body hidden" id="queuePanelBody">
+          <div class="queue-section">
+            <h4 class="queue-subheading">Now playing</h4>
+            <div class="queue-item-row active" id="queueNowPlayingRow">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+          <div class="queue-section">
+            <div class="queue-subheading-row">
+              <h4 class="queue-subheading">Next up</h4>
+              <button class="clear-queue-btn" id="clearQueueBtn">Clear</button>
+            </div>
+            <div class="queue-list-items" id="queueListItems">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- FULLSCREEN / LYRICS MODAL OVERLAY -->
+    <div class="fullscreen-player-modal hidden" id="fullscreenModal">
+      <div class="fs-top-bar">
+        <div class="fs-source-info">
+          <span class="fs-source-type">PLAYING FROM PLAYLIST</span>
+          <span class="fs-source-title" id="fsSourceTitle">Rockstar Anirudh Mix</span>
+        </div>
+        <button class="fs-close-btn" id="fsCloseBtn" title="Exit Fullscreen">
+          <i class="fa-solid fa-compress"></i>
+        </button>
+      </div>
+
+      <div class="fs-content-split">
+        <!-- Big Cover Art & Equalizer Waves -->
+        <div class="fs-left-cover">
+          <img src="" alt="Album Cover" id="fsCoverImg" class="fs-hero-art">
+          <div class="fs-meta-box">
+            <h1 class="fs-track-title" id="fsTrackTitle">Song Title</h1>
+            <p class="fs-track-artist" id="fsTrackArtist">Artist Name</p>
+          </div>
+          <!-- Animated Audio Visualizer Bars -->
+          <div class="fs-visualizer" id="fsVisualizer">
+            <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+            <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+            <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+            <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+          </div>
+        </div>
+
+        <!-- Lyrics / Karaoke View -->
+        <div class="fs-right-lyrics" id="fsLyricsContainer">
+          <div class="lyrics-header-tag">LYRICS</div>
+          <div class="lyrics-lines-wrapper" id="lyricsLinesWrapper">
+            <!-- Lyrics lines injected dynamically by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Fullscreen Bottom Controls -->
+      <div class="fs-bottom-controls">
+        <div class="fs-timeline-row">
+          <span class="time-label" id="fsCurrentTime">0:00</span>
+          <div class="timeline-slider-track fs-slider" id="fsTimelineTrack">
+            <div class="slider-fill" id="fsTimelineFill"></div>
+            <div class="slider-thumb" id="fsTimelineThumb"></div>
+          </div>
+          <span class="time-label" id="fsTotalDuration">0:00</span>
+        </div>
+        <div class="fs-buttons-row">
+          <button class="icon-plain-btn" id="fsShuffleBtn" title="Shuffle"><i class="fa-solid fa-shuffle"></i></button>
+          <button class="icon-plain-btn" id="fsPrevBtn" title="Previous"><i class="fa-solid fa-backward-step"></i></button>
+          <button class="fs-big-play-btn" id="fsPlayBtn" title="Play/Pause"><i class="fa-solid fa-play"></i></button>
+          <button class="icon-plain-btn" id="fsNextBtn" title="Next"><i class="fa-solid fa-forward-step"></i></button>
+          <button class="icon-plain-btn" id="fsRepeatBtn" title="Repeat"><i class="fa-solid fa-repeat"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM PERSISTENT PLAYER BAR -->
+    <footer class="bottom-player-bar" id="playerBar" aria-label="Media Player">
+      
+      <!-- Left Track Info Column -->
+      <div class="player-left-col">
+        <div class="player-art-wrap" id="playerArtWrap" title="Click to open album art view">
+          <img src="" alt="Album Artwork" id="playerArtImg" class="player-art-img">
+          <button class="expand-art-btn" id="expandArtBtn" title="Expand cover">
+            <i class="fa-solid fa-chevron-up"></i>
+          </button>
+        </div>
+        <div class="player-track-meta">
+          <div class="track-title-link" id="playerTrackTitle">Select a song to play</div>
+          <div class="track-artist-link" id="playerTrackArtist">Spotify Tamil</div>
+        </div>
+        <button class="player-heart-btn" id="playerHeartBtn" title="Save to your Liked Songs">
+          <i class="fa-regular fa-heart"></i>
+        </button>
+        <button class="pip-mode-btn" id="pipModeBtn" title="Picture in picture / Mini player">
+          <i class="fa-solid fa-film"></i>
+        </button>
+      </div>
+
+      <!-- Center Player Controls Column -->
+      <div class="player-center-col">
+        <div class="controls-top-row">
+          <button class="player-ctrl-btn" id="shuffleBtn" title="Enable shuffle">
+            <i class="fa-solid fa-shuffle"></i>
+            <span class="active-dot"></span>
+          </button>
+          <button class="player-ctrl-btn" id="prevBtn" title="Previous">
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
+          <button class="player-main-play-btn" id="mainPlayBtn" title="Play">
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <button class="player-ctrl-btn" id="nextBtn" title="Next">
+            <i class="fa-solid fa-forward-step"></i>
+          </button>
+          <button class="player-ctrl-btn" id="repeatBtn" title="Enable repeat">
+            <i class="fa-solid fa-repeat"></i>
+            <span class="repeat-one-badge hidden" id="repeatOneBadge">1</span>
+            <span class="active-dot"></span>
+          </button>
+        </div>
+
+        <div class="progress-bottom-row">
+          <span class="time-readout" id="currentTimeReadout">0:00</span>
+          
+          <div class="playback-bar-track" id="playbackBarTrack" role="slider" aria-label="Progress bar" tabindex="0">
+            <div class="buffer-bar" id="bufferBarFill"></div>
+            <div class="playback-bar-fill" id="playbackBarFill"></div>
+            <div class="playback-bar-handle" id="playbackBarHandle"></div>
+            <div class="scrub-tooltip" id="scrubTooltip">0:00</div>
+          </div>
+
+          <span class="time-readout" id="totalDurationReadout">0:00</span>
+        </div>
+      </div>
+
+      <!-- Right Device & Volume Controls Column -->
+      <div class="player-right-col">
+        <button class="player-action-icon" id="nowPlayingToggleBtn" title="Now playing view">
+          <i class="fa-regular fa-circle-play"></i>
+        </button>
+        <button class="player-action-icon" id="lyricsToggleBtn" title="Lyrics">
+          <i class="fa-solid fa-microphone-lines"></i>
+        </button>
+        <button class="player-action-icon" id="queueToggleBtn" title="Queue">
+          <i class="fa-solid fa-list-ul"></i>
+        </button>
+        <button class="player-action-icon" id="connectDeviceBtn" title="Connect to a device">
+          <i class="fa-solid fa-laptop-code"></i>
+        </button>
+        
+        <!-- Volume Slider Group -->
+        <div class="volume-slider-group">
+          <button class="player-action-icon" id="volumeBtn" title="Mute">
+            <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
+          </button>
+          <div class="volume-bar-track" id="volumeBarTrack" role="slider" aria-label="Volume slider" tabindex="0">
+            <div class="volume-bar-fill" id="volumeBarFill" style="width: 80%;"></div>
+            <div class="volume-bar-handle" id="volumeBarHandle" style="left: 80%;"></div>
+          </div>
+        </div>
+
+        <button class="player-action-icon" id="fullscreenToggleBtn" title="Full screen">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+        </button>
+      </div>
+
+    </footer>
+
+  </div>
+
+  <!-- Hidden HTML5 Audio Element -->
+  <audio id="audioPlayer" preload="auto"></audio>
+
+  <!-- JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
